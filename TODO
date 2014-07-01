@@ -1,1 +1,4 @@
-Fazer um novo conjunto de dados alterando o valor do fechamento de cada bolsa de numérico para alta (+), estável (o) e baixa(-).
+O y é o resultado se subiu, desceu ou ficou estável
+y = 1 subiu
+y = 0.5 estável
+y = 0 desceu
