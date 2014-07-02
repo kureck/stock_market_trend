@@ -141,7 +141,7 @@ def plot_data_set_and_hypothesis(x, y, x_1, x_2, f_grid=None, title=''):
 
 # target_fig.savefig('1.png')
 
-def gradient_descent(z, y, w_h=None, eta=1.0, max_iterations=2, epsilon=0.001):
+def gradient_descent(z, y, w_h=None, eta=1.0, max_iterations=100, epsilon=0.001):
   if w_h == None:
       w_h = np.array([0.0 for i in range(z.shape[1])])
   
@@ -153,12 +153,15 @@ def gradient_descent(z, y, w_h=None, eta=1.0, max_iterations=2, epsilon=0.001):
     # subset_indices = np.random.permutation(z.shape[0])[:N/8] # uncomment for stochastic gradient descent
     
     # grad_E_in = np.mean(np.tile(- y[subset_indices] / ( 1.0 + np.exp(y[subset_indices] * w_h.dot(z[subset_indices].T)) ), (z.shape[1], 1)).T * z[subset_indices], axis=0)
-    a = np.tile(- y[subset_indices] / ( 1.0 + np.exp(y[subset_indices] * w_h.dot(z[subset_indices].T)) ), (z.shape[1], 1)).T * z[subset_indices]
-    print a
-    raw_input()
+    
+    c = - y[subset_indices] / ( 1.0 + np.exp(y[subset_indices] * w_h.dot(z[subset_indices].T)) )
+    
+    b = np.tile(c, (z.shape[1], 1)).T
+
+    a = b * z[subset_indices]
     
     grad_E_in = np.mean(a, axis=0)
-    
+
     w_h -= eta * grad_E_in
     w_h_i.append(np.copy(w_h))
     if np.linalg.norm(grad_E_in) <= np.linalg.norm(w_h) * epsilon:
@@ -168,9 +171,9 @@ def gradient_descent(z, y, w_h=None, eta=1.0, max_iterations=2, epsilon=0.001):
 
 w_h_i = gradient_descent(z, y, eta=4.0)
 w_h = w_h_i[-1]
+print w_h
 print('Number of iterations: {:}'.format(w_h_i.shape[0]))
-
-# h = lambda z: logistic(w_h.dot(z.T))
+h = lambda z: logistic(w_h.dot(z.T))
 # h_grid = apply_to_fill(z_grid, h)
 
 # full_N_fig = plot_data_set_and_hypothesis(x, y, x_1, x_2, h_grid,
