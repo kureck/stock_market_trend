@@ -141,7 +141,7 @@ def plot_data_set_and_hypothesis(x, y, x_1, x_2, f_grid=None, title=''):
 
 # target_fig.savefig('1.png')
 
-def gradient_descent(z, y, w_h=None, eta=1.0, max_iterations=100, epsilon=0.001):
+def gradient_descent(z, y, w_h=None, eta=1.0, max_iterations=5, epsilon=0.001):
   if w_h == None:
       w_h = np.array([0.0 for i in range(z.shape[1])])
   
@@ -154,13 +154,13 @@ def gradient_descent(z, y, w_h=None, eta=1.0, max_iterations=100, epsilon=0.001)
     
     # grad_E_in = np.mean(np.tile(- y[subset_indices] / ( 1.0 + np.exp(y[subset_indices] * w_h.dot(z[subset_indices].T)) ), (z.shape[1], 1)).T * z[subset_indices], axis=0)
     
-    c = - y[subset_indices] / ( 1.0 + np.exp(y[subset_indices] * w_h.dot(z[subset_indices].T)) )
+    C = - y[subset_indices] / ( 1.0 + np.exp(y[subset_indices] * w_h.dot(z[subset_indices].T)) )
     
-    b = np.tile(c, (z.shape[1], 1)).T
+    B = np.tile(C, (z.shape[1], 1)).T
 
-    a = b * z[subset_indices]
+    A = B * z[subset_indices]
     
-    grad_E_in = np.mean(a, axis=0)
+    grad_E_in = np.mean(A, axis=0)
 
     w_h -= eta * grad_E_in
     w_h_i.append(np.copy(w_h))
@@ -180,7 +180,8 @@ h = lambda z: logistic(w_h.dot(z.T))
 #                                           title=r'Hypothesis, $N={:}$'.format(N))
 # full_N_fig.savefig('2.png')
 
-exit()
+raw_input()
+quit()
 def in_sample_error(z, y, h):
   y_h = (h(z) >= 0.5)*2-1
   return np.sum(y != y_h) / float(len(y))

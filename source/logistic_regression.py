@@ -1,10 +1,11 @@
 import numpy as np
 import scipy.optimize
+import data_prepare as dp
 
 def sigmoid(x):
   return 1.0 / (1.0 + np.exp(-x))
 
-def gradient_descent(x, y, w_h=None, eta=1.0, max_iterations=100, epsilon=0.001):
+def gradient_descent(x, y, w_h=None, eta=1.0, max_iterations=10000, epsilon=0.001):
   if w_h == None:
       w_h = np.array([0.0 for i in range(x.shape[1])])
   
@@ -14,13 +15,13 @@ def gradient_descent(x, y, w_h=None, eta=1.0, max_iterations=100, epsilon=0.001)
   for i in range(max_iterations):
     subset_indices = range(x.shape[0])
     
-    c = - y[subset_indices] / ( 1.0 + np.exp(y[subset_indices] * w_h.dot(x[subset_indices].T)) )
+    C = - y[subset_indices] / ( 1.0 + np.exp(y[subset_indices] * w_h.dot(x[subset_indices].T)) )
     
-    b = np.tile(c, (x.shape[1], 1)).T
+    B = np.tile(C, (x.shape[1], 1)).T
 
-    a = b * x[subset_indices]
+    A = B * x[subset_indices]
     
-    grad_E_in = np.mean(a, axis=0)
+    grad_E_in = np.mean(A, axis=0)
 
     w_h -= eta * grad_E_in
     w_h_i.append(np.copy(w_h))
@@ -29,8 +30,10 @@ def gradient_descent(x, y, w_h=None, eta=1.0, max_iterations=100, epsilon=0.001)
   
   return np.array(w_h_i)
 
+x, y = dp.data('../data/IBOVESPA.csv')
+
 w_h_i = gradient_descent(x, y, eta=4.0)
 w_h = w_h_i[-1]
 print w_h
 print('Number of iterations: {:}'.format(w_h_i.shape[0]))
-h = lambda x: logistic(w_h.dot(x.T))
+# h = lambda x: logistic(w_h.dot(x.T))
