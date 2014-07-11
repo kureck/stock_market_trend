@@ -1,0 +1,54 @@
+americas_bvsp, - Ibovespa Index (São Paulo)
+americas_gsptse, - S&P/TSX Composite index
+americas_ipsa, - IPSA Index (Santiago)
+americas_merv, - Merval Index (Buenos Aires)
+americas_mxx, - IPC Index (Mexico)
+asia_000001ss, - SSE Composite Index
+asia_aord, - All Ordinaries (Australia)
+asia_axjo, - S&P/ASX 200
+asia_bsesn, - S&P BSE Sensex (Bombay)
+asia_hsi, - Hang Seng Index
+asia_jkse, - Jakarta Stock Price Index
+asia_klse, - FTSE Bursa Malaysia KLCI
+asia_ks11, - KOSPI (Korea)
+asia_n225, - Nikkei 225
+asia_nz50, - NZ50 Index (New Zealand)
+asia_sti, - Straits Times Index
+asia_twii, - TWSE (Taiwan)
+europe_aex, - AEX
+europe_atx, - ATX
+europe_bfx, - EURONEXT BEL-20
+europe_fchi, - CAC 40
+europe_ftse, - FTSE 100
+europe_gdat, - Athens Composite Index
+europe_gdaxi, - DAX
+europe_omxspi, - OMX Stockholm_PI
+europe_oseax, - OSLO EXCH ALL SHARE
+europe_ssmi, - Swiss Market
+europe_stoxx50e, - EURO STOXX 50 Index
+us_bank, - NASDAQ Bank
+us_bkx, - KBW Bank Index
+us_gspc, - S&P 500
+us_inds, - NASDAQ Industrial
+us_insr, - NASDAQ Insurance
+us_ixco, - NASDAQ Computer
+us_ixic, - NASDAQ Composite
+us_ixtc, - NASDAQ Telecommunications
+us_mid, - S&P 400 Midcap Index
+us_nbi, - NASDAQ Biotechnology
+us_ndx, - NASDAQ-100
+us_ny, - NYSE US 100 INDEX
+us_nya, - NYSE Composite Index
+us_nyi, - NYSE INTL 100 INDEX
+us_nyl, - NYSE WORLD LEADERS INDEX
+us_nyy, - NYSE TMT INDEX
+us_oex, - S&P 100 Index
+us_ofin, - NASDAQ Other Finance
+us_rua, - Russell 3000
+us_rui, - Russell 1000
+us_rut, - Russell 2000
+us_sox, - PHLX Semiconductor Sector
+us_tran, - NASDAQ Transportation
+us_vix, - VOLATILITY S&P 500
+us_xax, - AMEX Composite Index
+us_xmi, - NYSE Arca Major Market Index,

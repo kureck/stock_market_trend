@@ -1,0 +1,162 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import numpy as np
+
+def sigmoid(x):
+    ''' Função sigmoid representada pela função tangente hiperbólica'''
+    return np.tanh(x)
+
+def dsigmoid(x):
+    ''' Derivada da tangente hiperbólica '''
+    return 1.0-x**2
+
+class MLP:
+    """ 
+        Classe do perceptron multicamada.
+
+        A ativação é dada por: sigmoid(dot(layers,weights))
+
+        :type args: int
+        :param args: quantidade de camadas que a rede terá. 
+
+        """
+
+    def __init__(self, *args):
+        ''' Inicialização do perceptron com o tamanho das camadas.  '''
+
+        self.shape = args
+        # args é a quantidade de camadas que a rede terá. Por exemplo: se
+        # a rede tiver dois perceptrons de entrada, dois na camada escondida e uma na saída
+        # a MLP deverá ser iniciada como MLP(2,2,1)
+
+        n = len(args)
+
+        # Cria as camadas
+        self.layers = []
+        
+        # Construção da camada de entrada (+1 para o bias)
+        self.layers.append(np.ones(self.shape[0]+1))
+        
+        # Camadas de entrada e camada de saída
+        for i in range(1,n):
+            self.layers.append(np.ones(self.shape[i]))
+
+        # Matriz de pesos aleatória entre -0.25 e +0.25
+        # TODO: dá pra encontrar um método melhor para iniciar os pesos
+        self.weights = []
+        for i in range(n-1):
+            self.weights.append(np.zeros((self.layers[i].size,
+                                         self.layers[i+1].size)))
+
+        # armazena os últimos pesos alterados
+        self.dw = [0,]*len(self.weights)
+
+        # Reinicia os pesos
+        self.reset()
+
+    def reset(self):
+        ''' Reinicia os pesos '''
+
+        for i in range(len(self.weights)):
+            Z = np.random.random((self.layers[i].size,self.layers[i+1].size))
+            self.weights[i][...] = (2*Z-1)*0.25
+
+    def propagate_forward(self, data):
+        ''' Propaga os dados da camada de entrada para a camada de saída. '''
+
+        # print "self.layers", self.layers
+        # Entra com os dados na camada de entrada
+        self.layers[0][0:-1] = data
+        # print "data", data
+        # print "self.layers[0][0:-1]", self.layers
+        # print "self.weights ", self.weights
+
+        # Propaga as mudanças dos pesos da camada 0 ate n-1 usando a sigmoid como 
+        # função de ativação
+        for i in range(1,len(self.shape)):
+            # print "self.layers[i][...]"
+            # print self.layers[i][...]
+            # print "sigmoid(np.dot(self.layers[i-1],self.weights[i-1]))"
+            # print sigmoid(np.dot(self.layers[i-1],self.weights[i-1]))
+            # print "---"
+            # print self.layers[i-1]
+            # print self.weights[i-1]
+            
+            ## Propagação
+            # A camada i recebe os pesos atualizados da camada i-1 através 
+            # da ativação sigmoid(dot(layers,weights))
+            self.layers[i][...] = sigmoid(np.dot(self.layers[i-1],self.weights[i-1]))
+
+        # print self.layers
+        # Retorna a saída
+        return self.layers[-1]
+
+
+    def propagate_backward(self, target, lrate=0.1, momentum=0.1):
+        ''' Retropropaga o erro. '''
+
+        deltas = []
+
+        # Calcula o erro na camada de saída
+        error = target - self.layers[-1]
+        delta = error*dsigmoid(self.layers[-1])
+        deltas.append(delta)
+
+        # Calcula o erro nas camadas escondidas
+        for i in range(len(self.shape)-2,0,-1):
+            delta = np.dot(deltas[0],self.weights[i].T)*dsigmoid(self.layers[i])
+            deltas.insert(0,delta)
+            
+        # Atualiza os pesos
+        for i in range(len(self.weights)):
+            layer = np.atleast_2d(self.layers[i])
+            delta = np.atleast_2d(deltas[i])
+            dw = np.dot(layer.T,delta)
+            self.weights[i] += lrate*dw + momentum*self.dw[i]
+            self.dw[i] = dw
+
+        # Retorna erro
+        return (error**2).sum()
+
+
+# -----------------------------------------------------------------------------
+if __name__ == '__main__':
+
+    def learn(network,samples, epochs=2500, lrate=.1, momentum=0.1):
+        # Treino 
+        for i in range(epochs):
+            n = np.random.randint(samples.size)
+            # print "n ", n
+            # print "samples['input'][n] ", samples['input'][n]
+            network.propagate_forward( samples['input'][n] )
+            network.propagate_backward( samples['output'][n], lrate, momentum )
+        # Teste
+        for i in range(samples.size):
+            o = network.propagate_forward( samples['input'][i] )
+            print i, samples['input'][i], '%.2f' % o[0],
+            print '(esperado %.2f)' % samples['output'][i]
+        print
+
+    network = MLP(2,2,1)
+    samples = np.zeros(4, dtype=[('input',  float, 2), ('output', float, 1)])
+
+    print "samples ", samples
+
+    # # Teste : Apenas IBOVESPA
+    # -------------------------------------------------------------------------
+    print "Aprendizado da bolsa: apenas IBOVESPA"
+    samples[0] = (53635., 15207.1), -1
+    samples[1] = (53802., 15215.0), -1
+    samples[2] = (54055., 15172.9), 1
+    samples[3] = (53875., 15137.2), 1
+    learn(network, samples, 5000, 0.01)
+
+    # Example 1 : OR logical function
+    # -------------------------------------------------------------------------
+    print "Aprendizado da função lógica OR"
+    network.reset()
+    samples[0] = (0,0), 0
+    samples[1] = (1,0), 1
+    samples[2] = (0,1), 1
+    samples[3] = (1,1), 1
+    learn(network, samples)
