@@ -142,7 +142,7 @@ if __name__ == '__main__':
     st1 = 'americas_bvsp'
     st2 = 'americas_gsptse'
     st3 = 'americas_ipsa'
-    stock = [st1, st2]
+    stock = [st1]
     data_prepare = dp.DataPrepare(file, stock)
     s_data = data_prepare.sliced_data()
     y_data = data_prepare.y_data(s_data)

@@ -34,9 +34,9 @@ class DataPrepare:
     y = 1.0
     for i in range(N-1):
       if df[df.columns[0]][i] > df[df.columns[0]][i+1]:
-          df['y'][i+1] = y = 0
+          df['y'][i+1] = y = 0.0
       if df[df.columns[0]][i] < df[df.columns[0]][i+1]:
-          df['y'][i+1] = y = 1
+          df['y'][i+1] = y = 1.0
       if df[df.columns[0]][i] == df[df.columns[0]][i+1]:
           df['y'][i+1] = y = 0.5
     return df
@@ -57,18 +57,15 @@ class DataPrepare:
       np.copyto(a[0][0],f)
     """
     df = self.y_data(df)
-    print df
-    raw_input()
     a = self.init_samples(df)
-    print a
-    raw_input()
     k = self.data_frame_row_to_array(df)
-    print k
-    raw_input()
     for i in range(len(a)):
       x = np.asarray(k[i][0:-1])
       y = k[i][-1]
-      np.copyto(a[i][0],x)
+      if len(a[i]) > 2:
+        np.copyto(a[i][0],x)
+      else:
+        a[i][0] = x
       a[i][1] = y
     return a
 
@@ -78,7 +75,7 @@ if __name__ == '__main__':
   st1 = 'americas_bvsp'
   st2 = 'americas_gsptse'
   st3 = 'americas_ipsa'
-  DP1 = DataPrepare(file, [st1, st2])
+  DP1 = DataPrepare(file)
   s_data = DP1.sliced_data()
   y_data = DP1.y_data(s_data)
   sample = DP1.prepare_data(y_data)
