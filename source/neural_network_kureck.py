@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import numpy as np
+import data_prepare as dp
 
 def sigmoid(x):
     ''' Função sigmoid representada pela função tangente hiperbólica'''
@@ -137,26 +138,35 @@ if __name__ == '__main__':
             print '(esperado %.2f)' % samples['output'][i]
         print
 
-    network = MLP(2,2,1)
-    samples = np.zeros(4, dtype=[('input',  float, 2), ('output', float, 1)])
-
-    print "samples ", samples
+    file = '../data/all_closes.csv'
+    st1 = 'americas_bvsp'
+    st2 = 'americas_gsptse'
+    st3 = 'americas_ipsa'
+    stock = [st1, st2]
+    data_prepare = dp.DataPrepare(file, stock)
+    s_data = data_prepare.sliced_data()
+    y_data = data_prepare.y_data(s_data)
+    samples = data_prepare.prepare_data(y_data)
+    network = MLP(len(stock),3,1) 
+    # samples = np.zeros(4, dtype=[('input',  float, 2), ('output', float, 1)])
 
     # # Teste : Apenas IBOVESPA
     # -------------------------------------------------------------------------
-    print "Aprendizado da bolsa: apenas IBOVESPA"
-    samples[0] = (53635., 15207.1), -1
-    samples[1] = (53802., 15215.0), -1
-    samples[2] = (54055., 15172.9), 1
-    samples[3] = (53875., 15137.2), 1
-    learn(network, samples, 5000, 0.01)
+    # print "Aprendizado da bolsa: apenas IBOVESPA"
+    # samples[0] = (53635., 15207.1), -1
+    # samples[1] = (53802., 15215.0), -1
+    # samples[2] = (54055., 15172.9), 1
+    # samples[3] = (53875., 15137.2), 1
+    learn(network, samples, 10000, 0.01)
 
-    # Example 1 : OR logical function
+    # Teste 1 : Função lógica OR
     # -------------------------------------------------------------------------
-    print "Aprendizado da função lógica OR"
-    network.reset()
-    samples[0] = (0,0), 0
-    samples[1] = (1,0), 1
-    samples[2] = (0,1), 1
-    samples[3] = (1,1), 1
-    learn(network, samples)
+    # print "Aprendizado da função lógica OR"
+    # network.reset()
+    # samples[0] = (0,0), 0
+    # samples[1] = (1,0), 1
+    # samples[2] = (0,1), 1
+    # samples[3] = (1,1), 1
+    # learn(network, samples)
+
+
