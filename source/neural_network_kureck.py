@@ -141,8 +141,9 @@ if __name__ == '__main__':
     file = '../data/all_closes.csv'
     st1 = 'americas_bvsp'
     st2 = 'americas_gsptse'
-    st3 = 'americas_ipsa'
-    stock = [st1]
+    st3 = ['americas_ipsa',"americas_merv","americas_mxx","asia_000001ss","asia_aord","asia_axjo","asia_bsesn","asia_hsi","asia_jkse"]
+    stock = [st1,st2] + st3
+    print stock
     data_prepare = dp.DataPrepare(file, stock)
     s_data = data_prepare.sliced_data()
     y_data = data_prepare.y_data(s_data)
