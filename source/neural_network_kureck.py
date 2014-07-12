@@ -65,24 +65,26 @@ class MLP:
     def propagate_forward(self, data):
         ''' Propaga os dados da camada de entrada para a camada de saída. '''
 
-        # print "self.layers", self.layers
         # Entra com os dados na camada de entrada
         self.layers[0][0:-1] = data
         # print "data", data
-        # print "self.layers[0][0:-1]", self.layers
-        # print "self.weights ", self.weights
+        # print "self.layers\n", self.layers
+        # print "self.layers[0][0:-1]\n", self.layers[0][0:-1]
+        # print "self.weights\n", self.weights
+        # print "\n"
 
         # Propaga as mudanças dos pesos da camada 0 ate n-1 usando a sigmoid como 
         # função de ativação
         for i in range(1,len(self.shape)):
             # print "self.layers[i][...]"
             # print self.layers[i][...]
+            # print "\n"
             # print "sigmoid(np.dot(self.layers[i-1],self.weights[i-1]))"
             # print sigmoid(np.dot(self.layers[i-1],self.weights[i-1]))
+            # print "\n"
             # print "---"
             # print self.layers[i-1]
             # print self.weights[i-1]
-            
             ## Propagação
             # A camada i recebe os pesos atualizados da camada i-1 através 
             # da ativação sigmoid(dot(layers,weights))
@@ -107,7 +109,7 @@ class MLP:
         for i in range(len(self.shape)-2,0,-1):
             delta = np.dot(deltas[0],self.weights[i].T)*dsigmoid(self.layers[i])
             deltas.insert(0,delta)
-            
+
         # Atualiza os pesos
         for i in range(len(self.weights)):
             layer = np.atleast_2d(self.layers[i])
@@ -131,42 +133,46 @@ if __name__ == '__main__':
             # print "samples['input'][n] ", samples['input'][n]
             network.propagate_forward( samples['input'][n] )
             network.propagate_backward( samples['output'][n], lrate, momentum )
+            # raw_input()
         # Teste
         for i in range(samples.size):
             o = network.propagate_forward( samples['input'][i] )
-            print i, samples['input'][i], '%.2f' % o[0],
-            print '(esperado %.2f)' % samples['output'][i]
+            print i, samples['input'][i], ' ', o,
+            print '(esperado)', samples['output'][i]
         print
 
-    file = '../data/all_closes.csv'
+    # # Teste 0 : Bolsas selecionadas
+    # -------------------------------------------------------------------------
+    file = '../data/all_closes_percentage.csv'
     st1 = 'americas_bvsp'
     st2 = 'americas_gsptse'
     st3 = ['americas_ipsa',"americas_merv","americas_mxx","asia_000001ss","asia_aord","asia_axjo","asia_bsesn","asia_hsi","asia_jkse"]
-    stock = [st1,st2] + st3
-    print stock
-    data_prepare = dp.DataPrepare(file, stock)
-    s_data = data_prepare.sliced_data()
-    y_data = data_prepare.y_data(s_data)
-    samples = data_prepare.prepare_data(y_data)
-    network = MLP(len(stock),3,1) 
-    # samples = np.zeros(4, dtype=[('input',  float, 2), ('output', float, 1)])
+    stock = [st1,st2]
+    data_prepare = dp.DataPrepare(file)
+    samples = data_prepare.prepare_data()
+    network = MLP(len(stock),3,3,3) 
+    learn(network, samples, 100, 0.1)
 
-    # # Teste : Apenas IBOVESPA
+    # # Teste 1 : Apenas IBOVESPA
     # -------------------------------------------------------------------------
     # print "Aprendizado da bolsa: apenas IBOVESPA"
-    # samples[0] = (53635., 15207.1), -1
-    # samples[1] = (53802., 15215.0), -1
-    # samples[2] = (54055., 15172.9), 1
-    # samples[3] = (53875., 15137.2), 1
-    learn(network, samples, 10000, 0.01)
+    # samples = np.zeros(4, dtype=[('input',  float, 2), ('output', list, 1)])
+    # network = MLP(2,3,3,3)
+    # samples[0] = (53635., 15207.1), [0,0,1]
+    # samples[1] = (53802., 15215.0), [0,0,1]
+    # samples[2] = (54055., 15172.9), [1,0,0]
+    # samples[3] = (53875., 15137.2), [1,0,0]
+    # learn(network, samples, 100, 0.1)
 
-    # Teste 1 : Função lógica OR
+    # Teste 2 : Função lógica OR
     # -------------------------------------------------------------------------
     # print "Aprendizado da função lógica OR"
     # network.reset()
+    # samples = np.zeros(4, dtype=[('input',  float, 2), ('output', float, 1)])
+    # network = MLP(2,3,3,1)
     # samples[0] = (0,0), 0
-    # samples[1] = (1,0), 1
-    # samples[2] = (0,1), 1
+    # samples[1] = (1,0), 0
+    # samples[2] = (0,1), 0
     # samples[3] = (1,1), 1
     # learn(network, samples)
 

@@ -28,26 +28,29 @@ class DataPrepare:
     return self.df[self.headers]
   
   def y_data(self, df):
-    df['y'] = np.ones(np.shape(len(df)))
     N = len(df)
+    y = []
     sample = []
-    y = 1.0
+    y.append([0,1,0])
+    dic = {}
     for i in range(N-1):
       if df[df.columns[0]][i] > df[df.columns[0]][i+1]:
-          df['y'][i+1] = y = 0.0
+          y.append([0,0,1]) # baixa
       if df[df.columns[0]][i] < df[df.columns[0]][i+1]:
-          df['y'][i+1] = y = 1.0
+          y.append([1,0,0]) # alta
       if df[df.columns[0]][i] == df[df.columns[0]][i+1]:
-          df['y'][i+1] = y = 0.5
-    return df
+          y.append([0,1,0]) # estável
+    dic['df'] = df
+    dic['y'] = y
+    return dic
 
   def init_samples(self,df):
-    return np.zeros(len(df), dtype=[('input',  float, len(df.columns)-1), ('output', float, 1.0)])
+    return np.zeros(len(df), dtype=[('input',  float, len(df.columns)), ('output', list, 1.0)])
   
   def data_frame_row_to_array(self, df):
     return [list(x) for x in df.to_records(index=False)]
 
-  def prepare_data(self, df):
+  def prepare_data(self):
     """
       formado de saída do dataframe deve ser: [(x1, ..., x_n), y]
       do tipo numpy.array(ROW_SIZE, dtype=[('input',  float, X_N), ('output', float, Y)])
@@ -56,17 +59,19 @@ class DataPrepare:
       f = np.asarray(k[0])
       np.copyto(a[0][0],f)
     """
-    df = self.y_data(df)
-    a = self.init_samples(df)
-    k = self.data_frame_row_to_array(df)
+    s_data = self.sliced_data()
+    df = self.y_data(s_data)
+    a = self.init_samples(df['df'])
+    k = self.data_frame_row_to_array(df['df'])
     for i in range(len(a)):
-      x = np.asarray(k[i][0:-1])
-      y = k[i][-1]
-      if len(a[i]) > 2:
+      x = np.asarray(k[i])
+      y = df['y'][i]
+      if isinstance(a[i][0], np.ndarray):
         np.copyto(a[i][0],x)
       else:
         a[i][0] = x
       a[i][1] = y
+      print
     return a
 
 # -----------------------------------------------------------------------------
@@ -74,11 +79,10 @@ if __name__ == '__main__':
   file = '../data/all_closes_percentage.csv'
   st1 = 'americas_bvsp'
   st2 = 'americas_gsptse'
-  st3 = 'americas_ipsa'
+  st3 = ['americas_ipsa',"americas_merv","americas_mxx","asia_000001ss","asia_aord","asia_axjo","asia_bsesn","asia_hsi","asia_jkse"]
+  stock = [st1,st2] + st3
   DP1 = DataPrepare(file)
-  s_data = DP1.sliced_data()
-  y_data = DP1.y_data(s_data)
-  sample = DP1.prepare_data(y_data)
+  sample = DP1.prepare_data()
   print sample
 
 
